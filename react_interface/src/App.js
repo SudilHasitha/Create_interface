@@ -10,9 +10,26 @@ import AppointmentInfo from "./components/AppointmentInfo";
 import {useState, useEffect, useCallback} from 'react';
 
 
+
 function App() {
 
   let [appointmentList,setAppointmentList] = useState([]) // initialize to empty array
+  // use to filter list using search bar input
+  let [query,setQuery] = useState("")
+
+  // to filter and get what actually typed not each and every character entered
+
+    // only showed appoinment filtred & affected by query
+    // item is temporary variable
+    const filteredAppointment = appointmentList.filter(
+      item => {
+        return (
+          item.petName.toLowerCase().includes(query.toLowerCase()) ||
+          item.ownerName.toLowerCase().includes(query.toLowerCase()) ||
+          item.aptNotes.toLowerCase().includes(query.toLowerCase())
+        )
+      }
+    )
 
   // read data from server
   const fetchData = useCallback(() => {
@@ -24,7 +41,7 @@ function App() {
     });
   },[])
 
-  // useEffect to track the fetching data
+  // useEffect to track the fetching data for changes
   useEffect(() => {fetchData()},[fetchData])
 
   return (
@@ -34,12 +51,22 @@ function App() {
         Appointment App
       </h1>
       <AddAppointment/>
-      <Search/>
+      <Search 
+      // access the values receive
+      query = {query} //set local query variable
+      onQueryChange={myQuery => setQuery(myQuery)} // pass the value of query
+      />
       <ul className="divide-y divide-gray-290">
-        {appointmentList
+        {filteredAppointment
           .map(appointment => (
             <AppointmentInfo key={appointment.id}
-              appointment={appointment}/>
+              appointment={appointment}
+              // receive the onDeleteAppointment
+              onDeleteAppointment={
+                appointmentId => 
+                  setAppointmentList(appointmentList.filter(appointment => appointment.id !== appointmentId))
+              }
+              />
           ))
         }
       </ul>

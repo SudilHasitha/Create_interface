@@ -32,8 +32,10 @@ const DropDown = ({toggle}) => {
       )    
 }
 
-const Search = () => {
+// to activate search there must be two way communication search and parent App.js
+const Search = ({query,onQueryChange}) => {
     let [toggleSort,setToggleSort]= useState(false);
+    
     return(
         <div className="py-5">
         <div className="mt-1 relative rounded-md shadow-sm">
@@ -41,7 +43,10 @@ const Search = () => {
             <BiSearch />
             <label htmlFor="query" className="sr-only" />
           </div>
-          <input type="text" name="query" id="query" value=""
+          <input type="text" name="query" id="query" value={query} //the value get track using 2 way communication
+            // event variable is created when somebody types some thing
+            // onquery change pass the value to parent component
+            onChange={(event) => {onQueryChange(event.target.value)}}
             className="pl-8 rounded-md focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300" placeholder="Search" />
           <div className="absolute inset-y-0 right-0 flex items-center">
             <div>
